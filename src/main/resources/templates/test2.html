@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html class="indexHtml" lang="cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <!-- <script type="text/javascript" src="jquery.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+  <script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
+  <link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">
+  <style>
+    #editor—wrapper {
+      border: 1px solid #ccc;
+      z-index: 100;
+      /* 按需定义 */
+    }
+
+    #toolbar-container {
+      border-bottom: 1px solid #ccc;
+    }
+
+    #editor-container {
+      height: 500px;
+    }
+
+    .button {
+      margin-top: 12px;
+      /* border: ; */
+      background: #3ca7fa;
+      border: 1px solid #3ca7fa;
+      color: #fff;
+      width: 80px;
+      height: 36px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <div id="editor—wrapper">
+      <div id="toolbar-container">
+        <!-- 工具栏 -->
+      </div>
+      <div id="editor-container">
+        <!-- 编辑器 -->
+      </div>
+    </div>
+    <button class="button" onclick="submit()">提交</button>
+  </div>
+
+  <script type="text/javascript">
+    const { createEditor, createToolbar, i18nChangeLanguage } = window.wangEditor
+
+    let editer = null; // 定义编译器
+    let toolbar = null; // 定义工具栏
+
+    $.ajax({
+      type: 'get',
+      // 获取富文本的地址
+      url: "/api/v1/content",
+      dataType: 'json',
+      success: function (res) {
+        if (res.code == '10200') {
+          createEditer(res.data)
+        } else {
+
+        }
+      }
+    })
+
+    const createEditer = (initData) => {
+      // 切换语言
+      const LANG = location.href.indexOf('lang=en') > 0 ? 'en' : 'zh-CN'
+      i18nChangeLanguage(LANG)
+
+      editor = createEditor({
+        selector: '#editor-container',
+        html: initData,
+        config: {
+          placeholder: 'Type here...',
+          MENU_CONF: {
+            uploadImage: {
+              fieldName: 'your-fileName',
+              base64LimitSize: 10 * 1024 * 1024 // 10M 以下插入 base64
+            }
+          },
+          onChange (editor) {
+            // console.log(editor.getHtml());
+          }
+        }
+      })
+
+      toolbar = createToolbar({
+        editor,
+        selector: '#toolbar-container',
+        config: {}
+      });
+    }
+
+
+    // 提交
+    submit = () => {
+      console.log(111, editor.getHtml());
+      $.ajax({
+        type: 'post',
+        //保存富文本内容的地址
+        // url: "http://www.herbdruginteraction.org/api/staticmessage?type_code=2&time=" + new Date().getTime(),
+        url: "/api/v1/content/save",
+        data: {
+          'text': editor.getHtml()
+        },
+        // contentType: 'application/json',
+        dataType: 'json',
+        success: function (res) {
+          if (res.code == '10200') {
+
+          } else {
+
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+
+</html>
