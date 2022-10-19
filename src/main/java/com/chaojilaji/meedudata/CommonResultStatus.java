@@ -2,7 +2,6 @@ package com.chaojilaji.meedudata;
 
 public enum CommonResultStatus implements ResultStatus {
     OK(10200, "成功"),
-
     NOT_EXISTS(10404,"目标不存在");
 
 

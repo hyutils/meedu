@@ -29,15 +29,16 @@ public class DemoController {
 
     @PostMapping("/api/v1/content/save")
     @ResponseBody
-    public Result save(@RequestParam String text){
-
+    public Result save(@RequestParam String text,HttpServletResponse response){
+        response.setHeader("Access-Control-Allow-Origin","*");
         FileUtils.createFileWithRelativePath(folderName,filePath,text);
         return Result.success(CommonResultStatus.OK);
     }
 
     @GetMapping("/api/v1/content")
     @ResponseBody
-    public Result getContent(){
+    public Result getContent(HttpServletResponse response){
+        response.setHeader("Access-Control-Allow-Origin","*");
         String content = FileUtils.getFileContent2(folderName+"/"+filePath,false);
         return Result.success(content);
     }
